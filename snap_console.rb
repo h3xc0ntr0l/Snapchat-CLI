@@ -127,23 +127,6 @@ def get__snaps()
  end
 end
 
-def verify(username, password)
- isNew = true
- fd = File.open("#{$pr}/p.txt", "a+")
- unless fd == nil
- 	fd.each_line do |line|
- 		arr = line.split(":")
- 		if arr[1] == password
- 			if arr[2] == username
- 				isNew = false
- 			end
- 		end
- 	end
- 	if isNew == true
- 		fd.write("#{username}:#{password}")
-  end
- end
-end
 
 unless ARGV.length === 2
 	unless ARGV.length === 1
@@ -197,7 +180,6 @@ else
 	$storydir = $pr
 end
 
-verify(username, password) #custom function for checking integrity of input
 $snap_instance = Snapcat::Client.new(username)
 resp = $snap_instance.login(password.chomp)
 if resp.data[:logged] === false
