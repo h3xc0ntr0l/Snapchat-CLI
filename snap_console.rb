@@ -8,6 +8,7 @@ $commands = ["get snaps - download snaps to working directory",
 					  "show/search friends - show/search friends list",
 					  "info - print info on a specified user",
 					  "add friend - add a friend",
+					  "best friends - show best friends",
 					  "delete friend - delete a friend",
 					  "show stats - show account statistics",
 					  "banner - show the banner",
@@ -30,6 +31,20 @@ def newline()
 	print ">> "
 end
 
+def show_best()
+	puts "\n"
+	data = $snap_instance.user.data
+	bfs = data[:bests]
+	puts "------------"
+	puts "Best friends"
+	puts "------------"
+	bfs.each do |friend|
+		puts "#{friend}"
+  end
+	puts "------------\n"
+end
+
+
 def eval(input)
 	if input === "help"
 		printHelp()
@@ -37,6 +52,8 @@ def eval(input)
 		exit()
 	elsif input === "get snaps"
 		get__snaps()
+	elsif input === "best friends"
+		show_best()
 	elsif input === "get stories"
 		get__stories()
 	elsif input === "show friends" || input === "search friends"
@@ -76,7 +93,23 @@ def get_input()
 end
 
 def showStats()
-	construction()
+	data = $snap_instance.user.data
+  reqs = data[:requests]
+  if reqs.length > 0
+  	puts "New friend requests!\n"
+  	reqs.each {|user| puts "#{user}"}
+  end
+  puts "\n"
+  puts "User Score: #{data[:score]}"
+  frs = data[:friends]
+  numfrs = 0
+  frs.each {|key, val| numfrs += 1}
+  puts "Number of friends: #{numfrs}"
+  puts "Registered phone number: #{data[:mobile]}"
+  puts "Registered email: #{data[:email]}"
+  puts "Total Number of Snaps Sent: #{data[:sent]}"
+  puts "Total Number of Snaps Receieved: #{data[:received]}"
+  puts "\n"
 end
 
 def deletefriend(username)
@@ -113,7 +146,21 @@ def showsearchfriends()
 end
 
 def get__stories()
- construction()
+ stories = $snap_instance.get_stories
+ stories.data.each do |key, value|
+ 		unless key != :friend_stories
+ 			value.each do |val|
+ 				val.each do |ne|
+ 					if ne[1].class == Array
+ 						n = ne[1]
+ 						n.each do |part|
+ 							extracted = part[:story]
+ 						end
+ 					end
+ 				end
+ 			end
+ 		end
+ end
 end
 
 def get__snaps()
@@ -121,12 +168,11 @@ def get__snaps()
  snap.each do |snapz|
 	 media_response = $snap_instance.media_for(snapz.id)
    media = media_response.data[:media]
- 	 print "New snap from: #{snapz.sender}"
+ 	 print "New snap from: #{snapz.sender}\n"
  	 f = File.open("#{$snapdir}/#{snapz.id[1..3] + snapz.sender}", "w")
  	 f.write(media)
  end
 end
-
 
 unless ARGV.length === 2
 	unless ARGV.length === 1
