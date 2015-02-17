@@ -1,2 +1,3 @@
 # Snapchat-CLI
-CLI To Interact With Snapchat - Inspired By Packetfu
+CLI To Interact With Snapchat
+Inspired by the example Packetfu-CLI
